@@ -1,0 +1,9 @@
+{
+	"folders":
+	[
+		{
+			"path": "Assets/CaptainsMess",
+			"file_exclude_patterns": ["*.meta", "*.prefab", "*.unity"]
+		}
+	]
+}
