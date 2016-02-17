@@ -1,13 +1,15 @@
 # CaptainsMess
 A local multiplayer networking library for making games like [Spaceteam](http://sleepingbeastgames.com/spaceteam) in Unity. Tested on iOS and Android, but probably runs on whatever else Unity Networking supports. Hopefully it will help other developers make more local multiplayer games!
 
-The library is designed for local multiplayer (LAN only) games where you play with other people in the same room. The main idea is to allow "one button" connections where you just hit Play and the game connects with other games around it. No IP addresses, connection dialogs, or decisions about Hosting or Joining.
+The library is designed for local multiplayer (LAN only) games where you play with other people in the same room. The main idea is to allow "one button" connections where you just hit Play and the game automatically connects with other games around it. No IP addresses, connection dialogs, or decisions about Hosting or Joining.
 
 It's currently built on top of the **Unity Networking HLAPI** (High Level API), specifically the `NetworkDiscovery` and `NetworkLobbyManager` classes.
 
 It's not finished yet. Please help if you can!
 
 So far it only supports Wifi.
+
+![Captains Mess Screenshot](http://www.sleepingbeastgames.com/files/CaptainsMessScreenshot.jpg)
 
 ## Todo list
 - [ ] Bluetooth support
@@ -16,7 +18,7 @@ So far it only supports Wifi.
 ## Example Project
 - In the Assets/CaptainsMess/**Example** folder there is a simple scene with a very basic implementation of the system
 - Run it on at least two devices, press **Auto Connect**, and after a few seconds you should see both players connect to a "lobby"
-- Check out **ExamplePlayerScript.cs** and **ExampleListener.cs** to see the details
+- Check out **[ExamplePlayerScript.cs](Assets/CaptainsMess/Example/ExamplePlayerScript.cs)** and **[ExampleListener.cs](Assets/CaptainsMess/Example/ExampleListener.cs)** to see the details
 
 ## Usage
 - Move Assets/**CaptainsMess** into your own Assets folder
