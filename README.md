@@ -70,6 +70,10 @@ These are built-in Unity Networking commands defined in the [NetworkLobbyPlayer]
 - `OnReceivedBroadcast()` You can override this if you want to show feedback about the network traffic
 - `OnDiscoveredServer()` You can override this if you want to show feedback about the network traffic.
 
+## Limitations
+- I only use a single Scene for Lobby/Game/Offline/Online. Unity Networking supports different scenes for these states so this functionality can be added back if needed.
+- I don't support disconnecting and re-connecting to a game already in progress. If any player disconnects after a game has started, the game is aborted.
+
 ---
 Please check it out and let me know if you have any problems or if you can help improve it! And if you want to support me please consider joining the **[Spaceteam Admiral's Club](http://spaceteamadmiralsclub.com/forum/plugin/page/membersArea)**.
 

@@ -2,8 +2,9 @@
 	"folders":
 	[
 		{
-			"path": "Assets/CaptainsMess",
-			"file_exclude_patterns": ["*.meta", "*.prefab", "*.unity"]
+			"path": ".",
+			"file_include_patterns": ["*.cs", "*.md", "LICENSE"],
+			"folder_include_patterns": ["Assets", "CaptainsMess", "Example"]
 		}
 	]
 }
