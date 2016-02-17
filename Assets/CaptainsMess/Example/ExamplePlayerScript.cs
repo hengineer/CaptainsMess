@@ -18,6 +18,8 @@ public class ExamplePlayerScript : CaptainsMessPlayer {
 		base.OnStartLocalPlayer();
 
 		// Send custom player info
+		// This is an example of sending additional information to the server that might be needed in the lobby (eg. colour, player image, personal settings, etc.)
+
 		myColour = UnityEngine.Random.ColorHSV(0,1,1,1,1,1);
 		CmdSetCustomPlayerInfo(myColour);
 	}
@@ -28,17 +30,17 @@ public class ExamplePlayerScript : CaptainsMessPlayer {
 		myColour = aColour;
 	}
 
-	// Update is called once per frame
-	public override void Update ()
+	public override void OnClientEnterLobby()
 	{
-		base.Update();
+		base.OnClientEnterLobby();
 
-		UpdateReadyStatus();
+		// Brief delay to let SyncVars propagate
+		Invoke("ShowPlayer", 0.5f);
 	}
 
-	void UpdateReadyStatus()
+	public override void OnClientReady(bool readyState)
 	{
-		if (IsReady())
+		if (readyState)
 		{
 			readyField.text = "READY!";
 			readyField.color = Color.green;
@@ -50,21 +52,13 @@ public class ExamplePlayerScript : CaptainsMessPlayer {
 		}
 	}
 
-	public override void OnClientEnterLobby()
-	{
-		base.OnClientEnterLobby();
-
-		// Brief delay to let SyncVars propagate
-		Invoke("ShowPlayer", 0.5f);
-	}
-
 	void ShowPlayer()
 	{
 		transform.SetParent(GameObject.Find("Canvas/PlayerContainer").transform, false);
 
 		image.color = myColour;	
 		nameField.text = deviceName;
-		UpdateReadyStatus();
+		OnClientReady(IsReady());
 	}
 
 	void OnGUI()

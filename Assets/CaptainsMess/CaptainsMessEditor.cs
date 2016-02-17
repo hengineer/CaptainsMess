@@ -64,7 +64,7 @@ public class CaptainsMessEditor : Editor
         }
 
         EditorGUILayout.PropertyField(countdownDurationProperty);
-        EditorGUILayout.HelpBox("The delay (in seconds) before a starting a game once all players are ready.", MessageType.None);
+        EditorGUILayout.HelpBox("The delay (in seconds) before starting a game once all players are ready.", MessageType.None);
 
         EditorGUILayout.PropertyField(listenerProperty);
         EditorGUILayout.HelpBox("The object that will receive messages from CaptainsMess like: JoinedLobby, StartGame, etc.", MessageType.None);
