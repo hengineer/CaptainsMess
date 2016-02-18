@@ -78,6 +78,12 @@ These are built-in Unity Networking commands defined in the [NetworkLobbyPlayer]
 - I don't support disconnecting and re-connecting to a game already in progress. If any player disconnects after a game has started, the game is aborted.
 
 ---
-Please check it out and let me know if you have any problems or if you can help improve it! And if you want to support me please consider joining the **[Spaceteam Admiral's Club](http://spaceteamadmiralsclub.com/forum/plugin/page/membersArea)**.
+Please check it out and let me know if you have any problems or if you can help improve it!
 
-Thanks, Henry (aka Captain Spaceteam) \[ [email](mailto:henry@sleepingbeastgames.com) | [twitter](https://twitter.com/hengineer) \]
+I've created a **discussion thread** on my forum here: [http://spaceteamadmiralsclub.com/forum/discussion/218/captainsmess-first-release#latest](http://spaceteamadmiralsclub.com/forum/discussion/218/captainsmess-first-release#latest)
+
+And if you want to support me please consider joining the **[Spaceteam Admiral's Club](http://spaceteamadmiralsclub.com/forum/plugin/page/membersArea)**.
+
+Thanks,
+
+Henry (aka Captain Spaceteam) \[ [email](mailto:henry@sleepingbeastgames.com) | [twitter](https://twitter.com/hengineer) \]
