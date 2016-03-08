@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.SceneManagement;
 
 public class CaptainsMessNetworkManager : NetworkLobbyManager
 {
@@ -21,6 +23,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
 
     private string maybeStartHostingFunction;
     private bool gameHasStarted = false;
+    private bool joinedLobby = false;
 
     public virtual void Start ()
     {
@@ -108,9 +111,12 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
             Debug.Log("#CaptainsMess# Cancelling!");
         }
 
-        if (gameHasStarted) {
+        if (gameHasStarted)
+        {
             SendAbortGameMessage();
             gameHasStarted = false;
+            Invoke("Cancel", 0.1f);
+            return;
         }
 
         CancelInvoke(maybeStartHostingFunction);
@@ -338,6 +344,21 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
         }
     }
 
+    public bool IsBroadcasting()
+    {
+        return discoveryServer.running;
+    }
+
+    public bool IsJoining()
+    {
+        return discoveryClient.running;
+    }
+
+    public bool IsConnected()
+    {
+        return IsClientConnected();
+    }
+
     // ------------------------ lobby server virtuals ------------------------
 
     public override void OnLobbyServerConnect(NetworkConnection conn)
@@ -454,6 +475,8 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
         }
 
         SendJoinedLobbyMessage();
+
+        joinedLobby = true;
     }
 
     public override void OnLobbyClientExit()
@@ -462,7 +485,16 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
             Debug.Log("#CaptainsMess# OnLobbyClientExit (num players = " + numPlayers + ")");
         }
 
-        SendLeftLobbyMessage();
+        // Check to see if we've actually joined a lobby
+        if (joinedLobby)
+        {
+            SendLeftLobbyMessage();
+        }
+        else
+        {
+            SendStopConnectingMessage();
+        }
+        joinedLobby = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -473,6 +505,11 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
     public void SendStartConnectingMessage()
     {
         listener.OnStartConnecting();
+    }
+
+    public void SendStopConnectingMessage()
+    {
+        listener.OnStopConnecting();
     }
 
     public void SendReceivedBroadcastMessage(string aFromAddress, string aData)
@@ -513,5 +550,5 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
     public void SendAbortGameMessage()
     {
         listener.OnAbortGame();
-    }    
+    }
 }

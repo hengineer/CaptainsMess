@@ -12,16 +12,29 @@ So far it only supports Wifi. I may have to drop down to the Low Level API to ad
 _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog/the-spaceteam-networking-post/](http://www.sleepingbeastgames.com/blog/the-spaceteam-networking-post/))_
 
 ## Todo list
+- [ ] Prevent it from switching scenes while connecting
 - [ ] Bluetooth support
 - [ ] Lots of testing
+
+## Version History
+### 0.2 (March 8, 2016)
+- Added example dice-rolling game
+- CaptainsMessListener is no longer a NetworkBehaviour
+- `OnLeftLobby` callback is called properly
+- New `OnStopConnecting` callback
+- Debug buttons now show and hide depending on connection state
+
+### 0.1 (February 18, 2016)
+- Initial public version
 
 ## Example Project
 
 ![Captains Mess Screenshot](http://www.sleepingbeastgames.com/files/CaptainsMessScreenshot.jpg)
 
-- In the Assets/CaptainsMess/**Example** folder there is a simple scene with a very basic implementation of the system
+- In the Assets/CaptainsMess/**Example** folder there is an implementation of a simple dice-rolling game
 - Run it on at least two devices, press **Auto Connect**, and after a few seconds you should see both players connect to a "lobby"
-- Check out **[ExamplePlayerScript.cs](Assets/CaptainsMess/Example/ExamplePlayerScript.cs)** and **[ExampleListener.cs](Assets/CaptainsMess/Example/ExampleListener.cs)** to see the details
+- Press Ready on all devices and the game should start
+- Check out **[ExamplePlayerScript.cs](Assets/CaptainsMess/Example/ExamplePlayerScript.cs)**, **[ExampleListener.cs](Assets/CaptainsMess/Example/ExampleListener.cs)**, and **[ExampleGameSession.cs](Assets/CaptainsMess/Example/ExampleGameSession.cs)** to see the details
 
 ## Usage
 - Move Assets/**CaptainsMess** into your own Assets folder
@@ -70,6 +83,7 @@ These are built-in Unity Networking commands defined in the [NetworkLobbyPlayer]
 - `OnJoinedLobby()` Called when the player joins a lobby
 - `OnLeftLobby()` Called when the player leaves a lobby or is disconnected
 - `OnStartConnecting()` You can override this if you want to show feedback that the game has started the connection process
+- `OnStopConnecting()` You can override this if you want to show feedback that the game has stopped the connection process
 - `OnReceivedBroadcast()` You can override this if you want to show feedback about the network traffic
 - `OnDiscoveredServer()` You can override this if you want to show feedback about the network traffic.
 

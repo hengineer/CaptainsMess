@@ -2,7 +2,7 @@
 using UnityEngine.Networking;
 using System.Collections.Generic;
 
-public class CaptainsMessListener : NetworkBehaviour
+public class CaptainsMessListener : MonoBehaviour
 {
 	public CaptainsMess mess;
 
@@ -12,6 +12,11 @@ public class CaptainsMessListener : NetworkBehaviour
 	}
 
 	public virtual void OnStartConnecting()
+	{
+		// Override
+	}
+
+	public virtual void OnStopConnecting()
 	{
 		// Override
 	}

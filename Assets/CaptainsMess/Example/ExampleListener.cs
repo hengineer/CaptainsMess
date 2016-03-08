@@ -6,50 +6,71 @@ using UnityEngine.UI;
 
 public class ExampleListener : CaptainsMessListener
 {
-	public Text messageField;
+	public enum NetworkState
+	{
+		Init,
+		Offline,
+		Connecting,
+		Connected,
+		Disrupted
+	};
+	public NetworkState networkState = NetworkState.Init;
+	public Text networkStateField;
+	public ExampleGameSession gameSession;
 
-	[SyncVar]
-	public string gameMessage;
+	public void Start()
+	{
+		networkState = NetworkState.Offline;
+	}
 
 	public override void OnStartConnecting()
 	{
-		gameMessage = "Connecting...";
+		networkState = NetworkState.Connecting;
+	}
+
+	public override void OnStopConnecting()
+	{
+		networkState = NetworkState.Offline;
 	}
 
 	public override void OnJoinedLobby()
 	{
-		gameMessage = "Lobby";
+		networkState = NetworkState.Connected;
+
+		gameSession.OnJoinedLobby();
 	}
 
 	public override void OnLeftLobby()
 	{
-		gameMessage = "Offline";
+		networkState = NetworkState.Offline;
+
+		gameSession.OnLeftLobby();
+	}
+
+	public override void OnCountdownStarted()
+	{
+		gameSession.OnCountdownStarted();
 	}
 
 	public override void OnCountdownCancelled()
 	{
-		gameMessage = "Lobby";
+		gameSession.OnCountdownCancelled();
 	}
 
 	public override void OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)
 	{
 		Debug.Log("GO!");
-		gameMessage = "GO!";
+		gameSession.OnStartGame(aStartingPlayers);
 	}
 
 	public override void OnAbortGame()
 	{
 		Debug.Log("ABORT!");
-		gameMessage = "Offline";
+		gameSession.OnAbortGame();
 	}
 
 	void Update()
 	{
-		if (mess.CountdownTimer() > 0)
-		{
-			gameMessage = "Game Starting in " + Mathf.Ceil(mess.CountdownTimer()) + "...";
-		}
-
-		messageField.text = gameMessage;
+		networkStateField.text = networkState.ToString();	
 	}
 }

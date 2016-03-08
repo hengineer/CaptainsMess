@@ -61,42 +61,56 @@ public class CaptainsMessDebugGUI : MonoBehaviour
 	{
 		GUILayout.BeginVertical();
 		{
-			GUILayout.BeginHorizontal();
+			if (networkManager.IsConnected())
 			{
-				GUI.color = Color.green;
-				if (GUILayout.Button("Auto Connect", GUILayout.Width(200), GUILayout.Height(120)))
+				GUI.color = Color.red;
+				if (GUILayout.Button("Disconnect", GUILayout.Width(200), GUILayout.Height(100)))
 				{
-					mess.AutoConnect();
+					mess.Cancel();
 				}
 				GUI.color = Color.white;
-
-				GUILayout.BeginVertical();
-				GUILayout.FlexibleSpace();
-				GUILayout.Label("... OR ...");
-				GUILayout.FlexibleSpace();
-				GUILayout.EndVertical();
-
-				GUILayout.BeginVertical();
-				{
-					if (GUILayout.Button("Host", GUILayout.Width(150), GUILayout.Height(60)))
-					{
-						mess.StartHosting();
-					}
-					if (GUILayout.Button("Join", GUILayout.Width(150), GUILayout.Height(60)))
-					{
-						mess.StartJoining();
-					}
-				}
-				GUILayout.EndVertical();
 			}
-			GUILayout.EndHorizontal();
-
-			GUI.color = Color.red;
-			if (GUILayout.Button("Cancel", GUILayout.Width(200), GUILayout.Height(100)))
+			else if (networkManager.IsBroadcasting() || networkManager.IsJoining())
 			{
-				mess.Cancel();
+				GUI.color = Color.yellow;
+				if (GUILayout.Button("Cancel", GUILayout.Width(200), GUILayout.Height(100)))
+				{
+					mess.Cancel();
+				}
+				GUI.color = Color.white;
 			}
-			GUI.color = Color.white;
+			else
+			{
+				GUILayout.BeginHorizontal();
+				{
+					GUI.color = Color.green;
+					if (GUILayout.Button("Auto Connect", GUILayout.Width(200), GUILayout.Height(120)))
+					{
+						mess.AutoConnect();
+					}
+					GUI.color = Color.white;
+
+					GUILayout.BeginVertical();
+					GUILayout.FlexibleSpace();
+					GUILayout.Label("... OR ...");
+					GUILayout.FlexibleSpace();
+					GUILayout.EndVertical();
+
+					GUILayout.BeginVertical();
+					{
+						if (GUILayout.Button("Host", GUILayout.Width(150), GUILayout.Height(60)))
+						{
+							mess.StartHosting();
+						}
+						if (GUILayout.Button("Join", GUILayout.Width(150), GUILayout.Height(60)))
+						{
+							mess.StartJoining();
+						}
+					}
+					GUILayout.EndVertical();
+				}
+				GUILayout.EndHorizontal();
+			}
 		}
 		GUILayout.EndVertical();
 
