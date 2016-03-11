@@ -14,6 +14,7 @@ public class ExampleListener : CaptainsMessListener
 		Connected,
 		Disrupted
 	};
+	[HideInInspector]
 	public NetworkState networkState = NetworkState.Init;
 	public Text networkStateField;
 	public ExampleGameSession gameSession;
