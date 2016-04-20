@@ -2,8 +2,8 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class CaptainsMessPlayer : NetworkLobbyPlayer {
-
+public class CaptainsMessPlayer : NetworkBehaviour
+{
 	[SyncVar]
 	public string deviceName;
 	[SyncVar]
@@ -13,9 +13,11 @@ public class CaptainsMessPlayer : NetworkLobbyPlayer {
 	[SyncVar]
 	public int playerIndex;
 
-	// This is needed due to a bug in NetworkLobbyPlayer where the initial state of the readyToBegin flag isn't synced properly
-	[SyncVar]
+	[SyncVar(hook="OnReadyChanged")]
 	public bool ready;
+
+	[SyncVar]
+	public byte slot;
 
 	// public string deviceModel;
 	// public int memory;
@@ -26,13 +28,23 @@ public class CaptainsMessPlayer : NetworkLobbyPlayer {
 
 	public override void OnStartClient()
 	{
-		base.OnStartClient();
-
 		networkManager = NetworkManager.singleton as CaptainsMessNetworkManager;
+        if (networkManager)
+        {
+            networkManager.lobbySlots[slot] = this;
+            OnClientEnterLobby();
+        }
+        else
+        {
+            Debug.LogError("CaptainsMessPlayer could not find a CaptainsMessNetworkManager.");
+        }
 	}
 
 	public override void OnStartLocalPlayer()
 	{
+		networkManager = NetworkManager.singleton as CaptainsMessNetworkManager;
+		networkManager.localPlayer = this;
+		
 		#if UNITY_ANDROID
 			deviceName = SystemInfo.deviceModel;
 		#else
@@ -42,6 +54,7 @@ public class CaptainsMessPlayer : NetworkLobbyPlayer {
 		deviceId = networkManager.deviceId;
 		peerId = networkManager.peerId;
 		playerIndex = slot;
+		ready = false;
 
 		// deviceModel = SystemInfo.deviceModel;
 		// memory = SystemInfo.systemMemorySize;
@@ -61,15 +74,46 @@ public class CaptainsMessPlayer : NetworkLobbyPlayer {
 		playerIndex = aPlayerIndex;
 	}
 
-	public bool IsReady()
+	[Command]
+	public void CmdSetReady(bool r)
 	{
-		return isLocalPlayer ? readyToBegin : ready;
+		ready = r;
 	}
 
-	[ServerCallback]
-	public virtual void Update()
+	public bool IsReady()
 	{
-		// This is needed due to a bug in NetworkLobbyPlayer where the initial state of the readyToBegin flag isn't synced properly
-		ready = readyToBegin;
+		return ready;
 	}
+
+	void OnReadyChanged(bool newValue)
+	{
+		ready = newValue;
+		OnClientReady(ready);
+
+		if (ready) {
+			networkManager.CheckReadyToBegin();
+		}
+	}
+
+	public void SendReadyToBeginMessage()
+	{
+		CmdSetReady(true);
+	}
+
+	public void SendNotReadyToBeginMessage()
+	{
+		CmdSetReady(false);
+	}
+
+    public virtual void OnClientEnterLobby()
+    {
+    }
+
+    public virtual void OnClientExitLobby()
+    {
+    }
+
+    public virtual void OnClientReady(bool readyState)
+    {
+    }	
 }

@@ -16,11 +16,15 @@ public class ExampleListener : CaptainsMessListener
 	};
 	public NetworkState networkState = NetworkState.Init;
 	public Text networkStateField;
+	
+	public GameObject gameSessionPrefab;
 	public ExampleGameSession gameSession;
 
 	public void Start()
 	{
 		networkState = NetworkState.Offline;
+
+		ClientScene.RegisterPrefab(gameSessionPrefab);
 	}
 
 	public override void OnStartConnecting()
@@ -33,11 +37,29 @@ public class ExampleListener : CaptainsMessListener
 		networkState = NetworkState.Offline;
 	}
 
+	public override void OnServerCreated()
+	{
+		// Create game session
+		ExampleGameSession oldSession = FindObjectOfType<ExampleGameSession>();
+		if (oldSession == null)
+		{
+			GameObject serverSession = Instantiate(gameSessionPrefab);
+			NetworkServer.Spawn(serverSession);
+		}
+		else
+		{
+			Debug.LogError("GameSession already exists!");
+		}
+	}
+
 	public override void OnJoinedLobby()
 	{
 		networkState = NetworkState.Connected;
 
-		gameSession.OnJoinedLobby();
+		gameSession = FindObjectOfType<ExampleGameSession>();
+		if (gameSession) {
+			gameSession.OnJoinedLobby();
+		}
 	}
 
 	public override void OnLeftLobby()

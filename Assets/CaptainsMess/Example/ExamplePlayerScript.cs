@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using System;
@@ -11,8 +11,6 @@ public class ExamplePlayerScript : CaptainsMessPlayer
 	public Text readyField;
 	public Text rollResultField;
 	public Text totalPointsField;
-
-	ExampleGameSession gameSession;
 
 	[SyncVar]
 	public Color myColour;
@@ -29,9 +27,6 @@ public class ExamplePlayerScript : CaptainsMessPlayer
 	public override void OnStartLocalPlayer()
 	{
 		base.OnStartLocalPlayer();
-
-		gameSession = FindObjectOfType(typeof(ExampleGameSession)) as ExampleGameSession;
-		//gameSession = GameObject.Find("ExampleGameSession").GetComponent<ExampleGameSession>();
 
 		// Send custom player info
 		// This is an example of sending additional information to the server that might be needed in the lobby (eg. colour, player image, personal settings, etc.)
@@ -55,7 +50,7 @@ public class ExamplePlayerScript : CaptainsMessPlayer
 	[Command]
 	public void CmdPlayAgain()
 	{
-		gameSession.PlayAgain();
+		ExampleGameSession.instance.PlayAgain();
 	}
 
 	public override void OnClientEnterLobby()
@@ -94,10 +89,8 @@ public class ExamplePlayerScript : CaptainsMessPlayer
 		OnClientReady(IsReady());
 	}
 
-	public override void Update()
+	public void Update()
 	{
-		base.Update();
-
 		totalPointsField.text = "Points: " + totalPoints.ToString();
 		if (rollResult > 0) {
 			rollResultField.text = "Roll: " + rollResult.ToString();
@@ -123,35 +116,39 @@ public class ExamplePlayerScript : CaptainsMessPlayer
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 
-			if (gameSession.gameState == GameState.Lobby ||
-				gameSession.gameState == GameState.Countdown)
+			ExampleGameSession gameSession = ExampleGameSession.instance;
+			if (gameSession)
 			{
-				if (GUILayout.Button(IsReady() ? "Not ready" : "Ready", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+				if (gameSession.gameState == GameState.Lobby ||
+					gameSession.gameState == GameState.Countdown)
 				{
-					if (IsReady()) {
-						SendNotReadyToBeginMessage();
-					} else {
-						SendReadyToBeginMessage();
+					if (GUILayout.Button(IsReady() ? "Not ready" : "Ready", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+					{
+						if (IsReady()) {
+							SendNotReadyToBeginMessage();
+						} else {
+							SendReadyToBeginMessage();
+						}
 					}
 				}
-			}
-			else if (gameSession.gameState == GameState.WaitingForRolls)
-			{
-				if (rollResult == 0)
+				else if (gameSession.gameState == GameState.WaitingForRolls)
 				{
-					if (GUILayout.Button("Roll Die", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+					if (rollResult == 0)
 					{
-						CmdRollDie();
+						if (GUILayout.Button("Roll Die", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+						{
+							CmdRollDie();
+						}
 					}
 				}
-			}
-			else if (gameSession.gameState == GameState.GameOver)
-			{
-				if (isServer)
+				else if (gameSession.gameState == GameState.GameOver)
 				{
-					if (GUILayout.Button("Play Again", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+					if (isServer)
 					{
-						CmdPlayAgain();
+						if (GUILayout.Button("Play Again", GUILayout.Width(Screen.width * 0.3f), GUILayout.Height(100)))
+						{
+							CmdPlayAgain();
+						}
 					}
 				}
 			}

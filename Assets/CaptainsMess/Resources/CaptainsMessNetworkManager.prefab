@@ -191,15 +191,10 @@ MonoBehaviour:
   matchMaker: {fileID: 0}
   matchName: default
   matchSize: 4
-  m_ShowLobbyGUI: 0
-  m_MaxPlayers: 4
-  m_MaxPlayersPerConnection: 1
-  m_MinPlayers: 1
-  m_LobbyPlayerPrefab: {fileID: 0}
-  m_GamePlayerPrefab: {fileID: 0}
-  m_LobbyScene: 
-  m_PlayScene: 
+  minPlayers: 2
+  maxPlayers: 4
   lobbySlots: []
+  maxPlayersPerConnection: 1
   broadcastIdentifier: CM
   deviceId: 
   peerId: 
