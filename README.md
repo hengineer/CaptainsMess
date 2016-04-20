@@ -83,7 +83,7 @@ _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog
 - `OnClientExitLobby()` Called when the player exits a lobby
 
 #### CaptainsMessListener callbacks
-- `OnServerStarted()` *(Server only)* Called after the server has started so you can do additional setup (eg. spawn network objects)
+- `OnServerCreated()` *(Server only)* Called after the server has started so you can do additional setup (eg. spawn network objects)
 - `OnStartGame(List<CaptainsMessPlayer> aStartingPlayers)` *(Server only)* Called when all players are ready and the countdown has finished. This is when your game should take over do whatever it needs to.
 - `OnAbortGame()` *(Server only)* Called if any player disconnects after the game has started. You should end your game at this point. At the moment there is no support for disconnecting/reconnecting while a game is in progress.
 - `OnCountdownStarted()` *(Server only)* Called when all players have marked themselves ready
