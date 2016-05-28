@@ -21,7 +21,9 @@ public class ExampleGameSession : NetworkBehaviour
 	public Text gameStateField;
 	public Text gameRulesField;
 
-	CaptainsMessListener networkListener;
+	public static ExampleGameSession instance;
+
+	ExampleListener networkListener;
 	List<ExamplePlayerScript> players;
 	string specialMessage = "";
 
@@ -31,10 +33,11 @@ public class ExampleGameSession : NetworkBehaviour
 	[SyncVar]
 	public string message = "";
 
-	public void OnDisable()
+	public void OnDestroy()
 	{
 		if (gameStateField != null) {
 			gameStateField.text = "";
+			gameStateField.gameObject.SetActive(false);
 		}
 		if (gameRulesField != null) {
 			gameRulesField.gameObject.SetActive(false);
@@ -44,7 +47,7 @@ public class ExampleGameSession : NetworkBehaviour
 	[Server]
 	public override void OnStartServer()
 	{
-		networkListener = FindObjectOfType(typeof(ExampleListener)) as ExampleListener;
+		networkListener = FindObjectOfType<ExampleListener>();
 		gameState = GameState.Connecting;
 	}
 
@@ -65,6 +68,22 @@ public class ExampleGameSession : NetworkBehaviour
 	public void OnAbortGame()
 	{
 		RpcOnAbortedGame();
+	}
+
+	[Client]
+	public override void OnStartClient()
+	{
+		if (instance) {
+			Debug.LogError("ERROR: Another GameSession!");
+		}
+		instance = this;
+
+		networkListener = FindObjectOfType<ExampleListener>();
+		networkListener.gameSession = this;
+
+		if (gameState != GameState.Lobby) {
+			gameState = GameState.Lobby;
+		}
 	}
 
 	public void OnJoinedLobby()

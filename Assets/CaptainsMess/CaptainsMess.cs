@@ -17,6 +17,11 @@ public class CaptainsMess : MonoBehaviour
 
     private CaptainsMessNetworkManager networkManager;
 
+    void OnLevelWasLoaded(int levelIndex)
+    {
+        Debug.Log("!!! LEVEL LOAD !!!");
+    }
+
     public void Awake()
     {
         ValidateConfig();
@@ -25,24 +30,20 @@ public class CaptainsMess : MonoBehaviour
         networkManager = (Instantiate(Resources.Load("CaptainsMessNetworkManager")) as GameObject).GetComponent<CaptainsMessNetworkManager>();
         if (networkManager != null)
         {
+            //networkManager.logLevel = 0;
+
             networkManager.name = "CaptainsMessNetworkManager";
             networkManager.runInBackground = false; // runInBackground is not recommended on iOS
             networkManager.broadcastIdentifier = broadcastIdentifier;
             networkManager.minPlayers = minPlayers;
             networkManager.maxPlayers = maxPlayers;
             networkManager.allReadyCountdownDuration = countdownDuration;
-            networkManager.showLobbyGUI = false;
 
             // I'm just using a single scene for everything
-            networkManager.lobbyScene = SceneManager.GetActiveScene().name;
-            networkManager.playScene = networkManager.lobbyScene;
-            networkManager.offlineScene = networkManager.lobbyScene;
-            networkManager.onlineScene = networkManager.lobbyScene;
+            networkManager.offlineScene = "";
+            networkManager.onlineScene = "";
 
-            networkManager.lobbyPlayerPrefab = playerPrefab;
-            if (playerPrefab) {
-                networkManager.gamePlayerPrefab = playerPrefab.gameObject;
-            }
+            networkManager.playerPrefab = playerPrefab.gameObject;
             networkManager.listener = listener;
             networkManager.verboseLogging = verboseLogging;
 
@@ -91,6 +92,11 @@ public class CaptainsMess : MonoBehaviour
         return networkManager.LobbyPlayers();
     }
 
+    public CaptainsMessPlayer LocalPlayer()
+    {
+        return networkManager.localPlayer;
+    }
+
     public void AutoConnect()
     {
         networkManager.minPlayers = minPlayers;
@@ -128,5 +134,15 @@ public class CaptainsMess : MonoBehaviour
     {
         networkManager.minPlayers = 1;
         networkManager.StartLocalGameForDebugging();
+    }
+
+    public bool IsConnected()
+    {
+        return networkManager.IsConnected();
+    }
+
+    public bool IsHost()
+    {
+        return networkManager.IsHost();
     }
 }

@@ -22,6 +22,11 @@ public class CaptainsMessListener : MonoBehaviour
 		// Override
 	}
 
+	public virtual void OnServerCreated()
+	{
+		// Override
+	}
+
 	public virtual void OnReceivedBroadcast(string aFromAddress, string aData)
 	{
 		// Override

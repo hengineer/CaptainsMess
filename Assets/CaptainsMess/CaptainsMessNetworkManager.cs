@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.SceneManagement;
 
-public class CaptainsMessNetworkManager : NetworkLobbyManager
+public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 {
     public string broadcastIdentifier = "CM";
     public string deviceId;
@@ -18,6 +18,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
     public CaptainsMessServer discoveryServer;
     public CaptainsMessClient discoveryClient;
     public CaptainsMessListener listener;
+    public CaptainsMessPlayer localPlayer;
 
     public float allReadyCountdown = 0;
 
@@ -62,14 +63,18 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
 
     private void StartHostingInternal()
     {
-        if (StartHost() == null) {
+        if (StartHost() != null) {
+            SendServerCreatedMessage();
+        } else {
             Debug.LogError("#CaptainsMess# Failed to start hosting!");
         }
     }
 
     public void StartLocalGameForDebugging()
     {
-        if (StartHost() == null) {
+        if (StartHost() != null) {
+            SendServerCreatedMessage();
+        } else {
             Debug.LogError("#CaptainsMess# Failed to start hosting!");
         }
     }
@@ -280,7 +285,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
 
     public bool AreAllPlayersReady()
     {
-        return (NumReadyPlayers() == NumPlayers());
+        return (NumReadyPlayers() == NumPlayers() && NumPlayers() >= minPlayers);
     }
 
     public List<CaptainsMessPlayer> LobbyPlayers()
@@ -289,7 +294,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
         foreach (var player in lobbySlots)
         {
             if (player != null) {
-                lobbyPlayers.Add(player as CaptainsMessPlayer);
+                lobbyPlayers.Add(player);
             }
         }
         return lobbyPlayers;
@@ -300,7 +305,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
         int readyCount = 0;
         foreach (var player in LobbyPlayers())
         {
-            if (player.readyToBegin) {
+            if (player.ready) {
                 readyCount += 1;
             }
         }
@@ -329,6 +334,9 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
                     allReadyCountdown -= Time.deltaTime;
                     if (allReadyCountdown <= 0)
                     {
+                        // Stop the broadcast so no more players join
+                        discoveryServer.StopBroadcast();
+
                         // Finalize player list
                         gameHasStarted = true;
                         SendStartGameMessage(LobbyPlayers());
@@ -357,6 +365,18 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
     public bool IsConnected()
     {
         return IsClientConnected();
+    }
+
+    public void CheckReadyToBegin()
+    {
+        if (AreAllPlayersReady()) {
+            OnLobbyServerPlayersReady();
+        }
+    }
+
+    public override bool HasGameStarted()
+    {
+        return gameHasStarted;
     }
 
     // ------------------------ lobby server virtuals ------------------------
@@ -429,7 +449,7 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
             Debug.Log("#CaptainsMess# OnLobbyServerCreateLobbyPlayer (num players " + NumPlayers() + ")");
         }
 
-        GameObject newLobbyPlayer = Instantiate(lobbyPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity) as GameObject;
+        GameObject newLobbyPlayer = Instantiate(playerPrefab.gameObject, Vector3.zero, Quaternion.identity) as GameObject;
         return newLobbyPlayer;
     }
 
@@ -449,6 +469,9 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
             }
             else
             {
+                // Stop the broadcast so no more players join
+                discoveryServer.StopBroadcast();
+
                 // Start game immediately
                 gameHasStarted = true;
                 SendStartGameMessage(LobbyPlayers());
@@ -501,6 +524,11 @@ public class CaptainsMessNetworkManager : NetworkLobbyManager
     //
     //  API messages
     //
+
+    public void SendServerCreatedMessage()
+    {
+        listener.OnServerCreated();
+    }
 
     public void SendStartConnectingMessage()
     {
