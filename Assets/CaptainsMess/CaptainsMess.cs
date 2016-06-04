@@ -36,7 +36,7 @@ public class CaptainsMess : MonoBehaviour
             networkManager.runInBackground = false; // runInBackground is not recommended on iOS
             networkManager.broadcastIdentifier = broadcastIdentifier;
             networkManager.minPlayers = minPlayers;
-            networkManager.maxPlayers = maxPlayers;
+            networkManager.SetMaxPlayers(maxPlayers); //Setting maxPlayers and maxConnections
             networkManager.allReadyCountdownDuration = countdownDuration;
 
             // I'm just using a single scene for everything
