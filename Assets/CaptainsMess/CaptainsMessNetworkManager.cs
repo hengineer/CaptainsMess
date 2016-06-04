@@ -319,35 +319,44 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
     public bool IsHost()
     {
-        NetworkIdentity networkObject = FindObjectOfType(typeof(NetworkIdentity)) as NetworkIdentity;
-        return (networkObject != null && networkObject.isServer && IsClientConnected() && NumPlayers() >= minPlayers);
+        if (localPlayer != null)
+        {
+            NetworkIdentity networkObject = localPlayer.GetComponent<NetworkIdentity>();
+            return (networkObject != null && networkObject.isServer && IsClientConnected() && NumPlayers() >= minPlayers);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void Update()
     {
-        if (IsHost())
-        {
-            if (allReadyCountdown > 0)
-            {
-                if (AreAllPlayersReady())
-                {
-                    allReadyCountdown -= Time.deltaTime;
-                    if (allReadyCountdown <= 0)
-                    {
-                        // Stop the broadcast so no more players join
-                        discoveryServer.StopBroadcast();
+        CheckAllReady();
+    }
 
-                        // Finalize player list
-                        gameHasStarted = true;
-                        SendStartGameMessage(LobbyPlayers());
-                    }
-                }
-                else
+    public void CheckAllReady()
+    {
+        if (!gameHasStarted && allReadyCountdown > 0)
+        {
+            if (AreAllPlayersReady())
+            {
+                allReadyCountdown -= Time.deltaTime;
+                if (allReadyCountdown <= 0)
                 {
-                    // Cancel the countdown
-                    allReadyCountdown = 0;
-                    SendCountdownCancelledMessage();
+                    // Stop the broadcast so no more players join
+                    discoveryServer.StopBroadcast();
+
+                    // Finalize player list
+                    gameHasStarted = true;
+                    SendStartGameMessage(LobbyPlayers());
                 }
+            }
+            else
+            {
+                // Cancel the countdown
+                allReadyCountdown = 0;
+                SendCountdownCancelledMessage();
             }
         }
     }
