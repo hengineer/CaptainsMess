@@ -17,6 +17,11 @@ _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog
 - [ ] Lots of testing
 
 ## Version History
+### 0.4 (June 25, 2016)
+- New `FinishGame` API call. Call it when the game is over so you can go back to the lobby with the same players.
+- Added internal support for `serverScore`. This may be used in the future to pick the server based on device performance, eg. to prefer the "fastest" device as the server.
+- Fixed some warnings.
+
 ### 0.3 (April 20, 2016)
 - The scene is no longer reloaded/changed when connecting.
 <br>*Because of this I would be wary of using [Scene Objects](http://docs.unity3d.com/Manual/UNetSceneObjects.html) (objects with NetworkIdentity that already exist in the scene) since they no longer seem to get synced properly. Instead you should spawn network objects.*
@@ -57,6 +62,7 @@ _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog
      - **Listener**: The object that will receive callbacks from CaptainsMess like: OnJoinedLobby, OnStartGame, etc. Must have the CaptainsMessListener component or a subclass.
      - **Verbose Logging**: Shows lots of log messages for debugging
      - **Use Debug GUI**: Shows debug buttons and some debug info for quick testing.
+     - **Force Server**: Force this device to be the server (internally: gives the device a very high `serverScore`, ensuring that it will be picked first)
 - Now you should be able to connect to other devices using the API calls or the Debug GUI
 - After the players are connected you can use the built-in Unity Networking features to communicate between devices like **SyncVars**, **Commands**, and **ClientRpcs**.
 
@@ -74,6 +80,8 @@ _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog
 - `IsConnected()` returns true if connected to other devices
 - `IsHost()` returns true if this device is the host/server
 - `StartLocalGameForDebugging()` is the same as StartHosting but temporarily sets minPlayers to 1 so that you can start a single-player game
+- `FinishGame()` call this when your game is over if you want to return to the lobby with the same players
+- `ForceServer(bool forceServer)` give the device a high 'serverScore' so that it will be preferred when choosing a server
 
 #### CaptainsMessPlayer API
 - `SendReadyToBeginMessage()` Tell the server that this player is ready
