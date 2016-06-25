@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
@@ -21,6 +22,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
     public CaptainsMessPlayer localPlayer;
 
     public float allReadyCountdown = 0;
+    public bool forceServer = false;
 
     private string maybeStartHostingFunction;
     private bool gameHasStarted = false;
@@ -89,7 +91,10 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             }
         }
 
+        const int HIGH_SERVER_SCORE = 999;
+
         discoveryServer.isOpen = false;
+        discoveryServer.serverScore = forceServer ? HIGH_SERVER_SCORE : 1;
         discoveryServer.RestartBroadcast();
     }
 
@@ -140,6 +145,11 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         StopServer();
 
         NetworkServer.Reset();
+    }
+
+    public void FinishGame()
+    {
+        gameHasStarted = false;
     }
 
     public void OnReceivedBroadcast(string aFromAddress, string aData)
@@ -227,20 +237,20 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
         }
     }
 
-    List<string> GetHostingCandidates()
+    List<DiscoveredServer> GetHostingCandidates()
     {
-        var candidates = new List<string>();
+        var candidates = new List<DiscoveredServer>();
 
         // Grab server peer IDs
         foreach (DiscoveredServer server in discoveryClient.discoveredServers.Values)
         {
             if (server.numPlayers < 2 && !server.isOpen) {
-                candidates.Add(server.peerId);
+                candidates.Add(server);
             }
         }
 
         if (verboseLogging) {
-            Debug.Log("#CaptainsMess# Hosting candidates: " + String.Join(",", candidates.ToArray()));
+            Debug.Log("#CaptainsMess# Hosting candidates: " + String.Join(",", candidates.Select(x => x.ToString()).ToArray()));
         }
         return candidates;
     }
@@ -252,9 +262,19 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             return "";
         }
 
-        // Pick lowest peer ID as server (maybe use fastest/best device instead?)
-        allCandidates.Sort();
-        string bestCandidate = allCandidates[0];
+        allCandidates.Sort((x,y) => {
+            if (x.serverScore != y.serverScore)
+            {
+                // Pick highest serverScore first
+                return y.serverScore.CompareTo(x.serverScore);
+            }
+            else
+            {
+                // Otherwise, pick lowest peer ID (arbitrary, maybe change to fastest/best device?)
+                return x.peerId.CompareTo(y.peerId);
+            }
+        });
+        string bestCandidate = allCandidates[0].peerId;
 
         if (verboseLogging) {
             Debug.Log("#CaptainsMess# Picked " + bestCandidate + " as best candidate");
@@ -345,18 +365,26 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
                 if (allReadyCountdown <= 0)
                 {
                     // Stop the broadcast so no more players join
-                    discoveryServer.StopBroadcast();
+                    if (discoveryServer.running) {
+                        discoveryServer.StopBroadcast();
+                    }
 
                     // Finalize player list
                     gameHasStarted = true;
-                    SendStartGameMessage(LobbyPlayers());
+
+                    if (IsHost()) {
+                        SendStartGameMessage(LobbyPlayers());
+                    }
                 }
             }
             else
             {
                 // Cancel the countdown
                 allReadyCountdown = 0;
-                SendCountdownCancelledMessage();
+
+                if (IsHost()) {
+                    SendCountdownCancelledMessage();
+                }
             }
         }
     }
@@ -403,7 +431,9 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
                 Debug.Log("#CaptainsMess# Max players reached, stopping broadcast");
             }
 
-            discoveryServer.StopBroadcast();
+            if (discoveryServer.running) {
+                discoveryServer.StopBroadcast();
+            }
         }
         else
         {
@@ -479,7 +509,9 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             else
             {
                 // Stop the broadcast so no more players join
-                discoveryServer.StopBroadcast();
+                if (discoveryClient.running) {
+                    discoveryServer.StopBroadcast();
+                }
 
                 // Start game immediately
                 gameHasStarted = true;

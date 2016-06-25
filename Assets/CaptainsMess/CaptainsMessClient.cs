@@ -15,6 +15,7 @@ public class DiscoveredServer : BroadcastData
 		peerId = aData.peerId;
 		isOpen = aData.isOpen;
 		numPlayers = aData.numPlayers;
+		serverScore = aData.serverScore;
 	}
 }
 

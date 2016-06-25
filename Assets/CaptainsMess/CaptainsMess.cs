@@ -14,6 +14,7 @@ public class CaptainsMess : MonoBehaviour
     public CaptainsMessListener listener;
     public bool verboseLogging = false;
     public bool useDebugGUI = true;
+    public bool forceServer = true;
 
     private CaptainsMessNetworkManager networkManager;
 
@@ -38,6 +39,7 @@ public class CaptainsMess : MonoBehaviour
             networkManager.minPlayers = minPlayers;
             networkManager.SetMaxPlayers(maxPlayers); //Setting maxPlayers and maxConnections
             networkManager.allReadyCountdownDuration = countdownDuration;
+            networkManager.forceServer = forceServer;
 
             // I'm just using a single scene for everything
             networkManager.offlineScene = "";
@@ -60,7 +62,7 @@ public class CaptainsMess : MonoBehaviour
 
     public void ValidateConfig()
     {
-        if (broadcastIdentifier == "Spaceteam")
+        if (broadcastIdentifier == "Spaceteam" && !Application.bundleIdentifier.Contains("com.sleepingbeastgames"))
         {
             Debug.LogError("#CaptainsMess# You should pick a unique Broadcast Identifier for your game", this);
         }
@@ -144,5 +146,16 @@ public class CaptainsMess : MonoBehaviour
     public bool IsHost()
     {
         return networkManager.IsHost();
+    }
+
+    public void FinishGame()
+    {
+        networkManager.FinishGame();
+    }
+
+    public void SetForceServer(bool fs)
+    {
+        forceServer = fs;
+        networkManager.forceServer = fs;
     }
 }

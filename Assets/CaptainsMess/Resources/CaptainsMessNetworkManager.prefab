@@ -158,10 +158,10 @@ MonoBehaviour:
     m_PacketSize: 1500
     m_FragmentSize: 500
     m_ResendTimeout: 1200
-    m_DisconnectTimeout: 2000
+    m_DisconnectTimeout: 30000
     m_ConnectTimeout: 2000
     m_MinUpdateTimeout: 10
-    m_PingTimeout: 500
+    m_PingTimeout: 1000
     m_ReducedPingTimeout: 100
     m_AllCostTimeout: 20
     m_NetworkDropThreshold: 5
@@ -204,7 +204,9 @@ MonoBehaviour:
   discoveryServer: {fileID: 11496848}
   discoveryClient: {fileID: 11445422}
   listener: {fileID: 0}
+  localPlayer: {fileID: 0}
   allReadyCountdown: 0
+  forceServer: 0
 --- !u!114 &11460100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -243,6 +245,7 @@ MonoBehaviour:
     peerId: 
     isOpen: 0
     numPlayers: 0
+    serverScore: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

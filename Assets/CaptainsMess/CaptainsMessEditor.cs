@@ -15,6 +15,7 @@ public class CaptainsMessEditor : Editor
     SerializedProperty listenerProperty;
     SerializedProperty verboseLoggingProperty;
     SerializedProperty useDebugGUIProperty;
+    SerializedProperty forceServerProperty;
 
 	public void OnEnable()
 	{
@@ -26,6 +27,7 @@ public class CaptainsMessEditor : Editor
         listenerProperty = serializedObject.FindProperty("listener");
         verboseLoggingProperty = serializedObject.FindProperty("verboseLogging");
         useDebugGUIProperty = serializedObject.FindProperty("useDebugGUI");
+        forceServerProperty = serializedObject.FindProperty("forceServer");
 	}
 
     public override void OnInspectorGUI()
@@ -81,6 +83,9 @@ public class CaptainsMessEditor : Editor
 
         EditorGUILayout.PropertyField(useDebugGUIProperty);
         EditorGUILayout.HelpBox("Show a Debug GUI for testing connections.", MessageType.None);
+
+        EditorGUILayout.PropertyField(forceServerProperty);
+        EditorGUILayout.HelpBox("Force this device to be the server", MessageType.None);
 
 		serializedObject.ApplyModifiedProperties();
     }
