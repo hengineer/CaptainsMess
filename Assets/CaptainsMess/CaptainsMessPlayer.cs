@@ -4,6 +4,11 @@ using UnityEngine.Networking;
 
 public class CaptainsMessPlayer : NetworkBehaviour
 {
+	public static int VERSION = 1;
+
+	[SyncVar]
+	public int version;
+
 	[SyncVar]
 	public string deviceName;
 	[SyncVar]
@@ -51,6 +56,7 @@ public class CaptainsMessPlayer : NetworkBehaviour
 			deviceName = SystemInfo.deviceName;
 		#endif
 
+		version = VERSION;
 		deviceId = networkManager.deviceId;
 		peerId = networkManager.peerId;
 		playerIndex = slot;
@@ -62,12 +68,23 @@ public class CaptainsMessPlayer : NetworkBehaviour
 		// operatingSystem = SystemInfo.operatingSystem;
 		// Debug.Log(String.Format("Device specs: {0}, {1}, {2} proc, {3} mem", deviceModel, operatingSystem, processorFrequency, memory));
 
-		CmdSetBasePlayerInfo(deviceName, deviceId, peerId, playerIndex);
+		CmdSetBasePlayerInfo(version, deviceName, deviceId, peerId, playerIndex);
+	}
+
+	public void OnDestroy()
+	{
+		// If this is a client player on the server then OnClientExitLobby will not be called.
+		// Call it here instead.
+		if (networkManager.IsHost() && networkManager.localPlayer != this)
+		{
+			OnClientExitLobby();
+		}
 	}
 
 	[Command]
-	public virtual void CmdSetBasePlayerInfo(string aDeviceName, string aDeviceId, string aPeerId, int aPlayerIndex)
+	public virtual void CmdSetBasePlayerInfo(int aVersion, string aDeviceName, string aDeviceId, string aPeerId, int aPlayerIndex)
 	{
+		version = aVersion;
 		deviceName = aDeviceName;
 		deviceId = aDeviceId;
 		peerId = aPeerId;

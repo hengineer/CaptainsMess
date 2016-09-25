@@ -158,4 +158,14 @@ public class CaptainsMess : MonoBehaviour
         forceServer = fs;
         networkManager.forceServer = fs;
     }
+
+    public void SetPrivateTeamKey(string key)
+    {
+        networkManager.SetPrivateTeamKey(key);
+    }
+
+    public int HighestConnectedVersion()
+    {
+        return networkManager.HighestConnectedVersion();
+    }
 }

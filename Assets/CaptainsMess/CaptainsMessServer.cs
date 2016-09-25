@@ -5,11 +5,14 @@ using UnityEngine.Networking;
 [System.Serializable]
 public class BroadcastData
 {
-	public int version = 1;
+	public static int VERSION = 1;
+
+	public int version = VERSION;
 	public string peerId;
 	public bool isOpen;
 	public int numPlayers;
 	public int serverScore;
+	public string privateTeamKey = "";
 
 	public override string ToString()
 	{
@@ -20,7 +23,7 @@ public class BroadcastData
 		// the previous value without clearing it. This way, the garbage data at the end will just get ignored.
 		//
 		// TODO: Find a better way of dealing with this!
-		return String.Format("{0}:{1}:{2}:{3}:{4}::", version, peerId, isOpen ? 1 : 0, numPlayers, serverScore);
+		return String.Format("{0}:{1}:{2}:{3}:{4}:{5}::", version, peerId, isOpen ? 1 : 0, numPlayers, serverScore, privateTeamKey);
 	}
 
 	public void FromString(string aString)
@@ -36,6 +39,10 @@ public class BroadcastData
 		} else {
 			serverScore = 1;
 		}
+
+		if (items.Length > 5) {
+			privateTeamKey = items[5];
+		}
 	}
 }
 
@@ -43,9 +50,10 @@ public class CaptainsMessServer : NetworkDiscovery
 {
 	public CaptainsMessNetworkManager networkManager;
 	public BroadcastData broadcastDataObject;
-	public bool isOpen		{ get { return broadcastDataObject.isOpen; } set { broadcastDataObject.isOpen = value; } }
-	public int numPlayers	{ get { return broadcastDataObject.numPlayers; } set { broadcastDataObject.numPlayers = value; } }
-	public int serverScore	{ get { return broadcastDataObject.serverScore; } set { broadcastDataObject.serverScore = value; } }
+	public bool isOpen				{ get { return broadcastDataObject.isOpen; } set { broadcastDataObject.isOpen = value; } }
+	public int numPlayers			{ get { return broadcastDataObject.numPlayers; } set { broadcastDataObject.numPlayers = value; } }
+	public int serverScore			{ get { return broadcastDataObject.serverScore; } set { broadcastDataObject.serverScore = value; } }
+	public string privateTeamKey	{ get { return broadcastDataObject.privateTeamKey; } set { broadcastDataObject.privateTeamKey = value; } }
 
 	void Start()
 	{
@@ -103,8 +111,19 @@ public class CaptainsMessServer : NetworkDiscovery
 		if (!Initialize()) {
 			Debug.LogError("#CaptainsMess# Network port is unavailable!");
 		}
-		if (!StartAsServer()) {
+		if (!StartAsServer())
+		{
 			Debug.LogError("#CaptainsMess# Unable to broadcast!");
+
+			// Clean up some data that Unity seems not to
+			if (hostId != -1)
+			{
+				if (isServer) {
+					NetworkTransport.StopBroadcastDiscovery();
+				}
+            	NetworkTransport.RemoveHost(hostId);
+            	hostId = -1;
+            }
 		}
 	}
 }
