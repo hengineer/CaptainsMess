@@ -18,11 +18,6 @@ public class CaptainsMess : MonoBehaviour
 
     private CaptainsMessNetworkManager networkManager;
 
-    void OnLevelWasLoaded(int levelIndex)
-    {
-        Debug.Log("!!! LEVEL LOAD !!!");
-    }
-
     public void Awake()
     {
         ValidateConfig();
