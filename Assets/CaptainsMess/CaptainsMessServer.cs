@@ -64,7 +64,7 @@ public class CaptainsMessServer : NetworkDiscovery
 	public void Setup(CaptainsMessNetworkManager aNetworkManager)
 	{
 		networkManager = aNetworkManager;
-		broadcastKey = aNetworkManager.broadcastIdentifier.GetHashCode(); // Make sure broadcastKey matches client
+		broadcastKey = Mathf.Abs(aNetworkManager.broadcastIdentifier.GetHashCode()); // Make sure broadcastKey matches client
 		isOpen = false;
 		numPlayers = 0;
 
