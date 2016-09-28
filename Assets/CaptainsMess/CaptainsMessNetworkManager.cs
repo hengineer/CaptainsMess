@@ -46,6 +46,16 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             peerId, broadcastIdentifier, minPlayers, maxPlayers));
     }
 
+    public void InitNetworkTransport()
+    {
+        NetworkTransport.Init();
+    }
+
+    public void ShutdownNetworkTransport()
+    {
+        NetworkTransport.Shutdown();
+    }
+
     public void StartHosting()
     {
         if (verboseLogging) {
@@ -88,15 +98,8 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             // Must also start network server so the broadcast is sent properly
             if (!StartServer())
             {
-                // First just reset everything and try again
-                NetworkTransport.Shutdown();
-                NetworkTransport.Init();
-
-                if (!StartServer())
-                {
-                    Debug.LogError("#CaptainsMess# Failed to start broadcasting!");
-                    return;
-                }
+                Debug.LogError("#CaptainsMess# Failed to start broadcasting!");
+                return;
             }
         }
 
