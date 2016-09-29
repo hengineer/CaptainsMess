@@ -181,6 +181,11 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             Debug.Log("#CaptainsMess# Discovered " + aServer.rawData);
         }
 
+        if (discoveryServer.isOpen) {
+            Debug.Log("#CaptainsMess# Already hosting a server, ignoring " + aServer.rawData);
+            return;
+        }
+
         SendDiscoveredServerMessage(aServer);
 
         bool shouldJoin = false;
