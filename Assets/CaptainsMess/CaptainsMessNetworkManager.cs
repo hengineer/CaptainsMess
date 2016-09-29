@@ -568,7 +568,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
             else
             {
                 // Stop the broadcast so no more players join
-                if (discoveryClient.running) {
+                if (discoveryServer.running) {
                     discoveryServer.StopBroadcast();
                 }
 
