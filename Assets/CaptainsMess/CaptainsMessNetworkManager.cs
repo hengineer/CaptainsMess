@@ -30,7 +30,7 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
     public virtual void Start ()
     {
-        deviceId = SystemInfo.deviceUniqueIdentifier;
+        deviceId = GetUniqueDeviceId();
         peerId = deviceId.Substring(0, 8);
 
         discoveryServer.Setup(this);
@@ -44,6 +44,29 @@ public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 
         Debug.Log(String.Format("#CaptainsMess# Initialized peer {0}, \'{1}\', {2}-{3} players",
             peerId, broadcastIdentifier, minPlayers, maxPlayers));
+    }
+
+    string GetUniqueDeviceId()
+    {
+        // NOTE: Don't use SystemInfo.deviceUniqueIdentifier here because it causes Android
+        // to ask for permission to "make and manage phone calls?" which sounds suspicious.
+        // Using this alternate method means that the ID isn't truly unique. Each time the app is
+        // uninstalled/reinstalled a new ID will be generated.
+        // This won't matter for normal connections but might matter if you want to use the ID
+        // to track unique players met (eg. Spaceteam has achievements for number of players met).
+
+        string savedId = PlayerPrefs.GetString("CaptainsMessDeviceId");
+        if (string.IsNullOrEmpty(savedId))
+        {
+            savedId = GenerateNewUniqueID();
+            PlayerPrefs.SetString("CaptainsMessDeviceId", savedId);
+        }
+        return savedId;
+    }
+
+    string GenerateNewUniqueID()
+    {
+        return Guid.NewGuid().ToString().Substring(0,8);
     }
 
     public void InitNetworkTransport()
