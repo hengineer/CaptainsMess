@@ -17,6 +17,14 @@ _(For more background, see my blog post: [http://www.sleepingbeastgames.com/blog
 - [ ] Lots of testing
 
 ## Version History
+### 0.5 (October 4, 2016)
+- Android no longer asks for permission to "make and manage phone calls?"
+	- NOTE: This was fixed by no longer using `System.deviceUniqueIdentifier`. I now use a different system which is not technically unique to the device. It will be regenerated if the app is uninstalled/reinstalled. This is fine for normal connections but won't work if you actually want to track unique devices (eg. Spaceteam has achievements for number of players met)
+- Version support (game will not start if players have incompatible versions)
+- Private Team support (only connect to players with the same private team password/code)
+- Fixed various connection bugs
+- Unity 5.4.1 upgrade
+
 ### 0.4 (June 25, 2016)
 - New `FinishGame` API call. Call it when the game is over so you can go back to the lobby with the same players.
 - Added internal support for `serverScore`. This may be used in the future to pick the server based on device performance, eg. to prefer the "fastest" device as the server.
