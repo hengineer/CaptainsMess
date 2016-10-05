@@ -14,7 +14,7 @@ public class CaptainsMess : MonoBehaviour
     public CaptainsMessListener listener;
     public bool verboseLogging = false;
     public bool useDebugGUI = true;
-    public bool forceServer = true;
+    public bool forceServer = false;
 
     private CaptainsMessNetworkManager networkManager;
 
