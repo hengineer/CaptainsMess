@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
-using UnityEngine.SceneManagement;
 
 public class CaptainsMessNetworkManager : CaptainsMessLobbyManager
 {

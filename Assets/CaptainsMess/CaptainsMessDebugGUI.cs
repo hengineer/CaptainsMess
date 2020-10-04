@@ -18,7 +18,7 @@ public class CaptainsMessDebugGUI : MonoBehaviour
 		string serverString = "[SERVER]\n";
 		if (NetworkServer.active && networkManager.numPlayers > 0)
 		{
-			serverString += "Hosting at " + Network.player.ipAddress + "\n";
+			serverString += "Hosting at " + NetworkManager.singleton.networkAddress + "\n";
 			serverString += String.Format("Players Ready = {0}/{1}", networkManager.NumReadyPlayers(), networkManager.NumPlayers()) + "\n";
 		}
 		if (networkManager.discoveryServer.running && networkManager.discoveryServer.isServer)
